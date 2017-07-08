@@ -94,25 +94,8 @@ class LearningAgent(Agent):
         # With the hand-engineered features, this learning process gets entirely negated.
         
         # Set 'state' as a tuple of relevant data for the agent        
-        short_state = False
 
-        state_waypoint = waypoint
-        state_light_red = True if inputs['light'] == 'red' else False
-
-        if short_state:
-            state_vehicle_in_waypoint = False;
-            if waypoint == 'forward':
-                if inputs['oncoming'] is not None:
-                    state_vehicle_in_waypoint = True
-            elif waypoint == 'left':
-                if inputs['left'] is not None:
-                    state_vehicle_in_waypoint = True
-            elif waypoint == 'right':
-                if inputs['right'] is not None:
-                    state_vehicle_in_waypoint = True
-            state = (state_waypoint, state_light_red, state_vehicle_in_waypoint)
-        else:
-            state = (state_waypoint, state_light_red, inputs['oncoming'], inputs['left'], inputs['right'])
+        state = (waypoint, inputs['light'], inputs['oncoming'], inputs['left'], inputs['right'])
 
         return state
 
@@ -214,8 +197,9 @@ class LearningAgent(Agent):
         #   Use only the learning rate 'alpha' (do not use the discount factor 'gamma')
 
         if self.learning:
-            self.Q[state][action] = (1 - self.alpha) * self.Q[state][action] + self.alpha * reward
-
+            # self.Q[state][action] = (1 - self.alpha) * self.Q[state][action] + self.alpha * reward
+            # suggested update by reviewer ... but it is the same
+            self.Q[state][action] += self.alpha * (reward - self.Q[state][action])
         return
 
 

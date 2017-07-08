@@ -228,18 +228,34 @@ class Simulator(object):
         if self.log_metrics:
 
             if a.learning:
-                f = self.table_file
-                
-                f.write("/-----------------------------------------\n")
-                f.write("| State-action rewards from Q-Learning\n")
-                f.write("\-----------------------------------------\n\n")
 
-                for state in a.Q:
-                    f.write("{}\n".format(state))
-                    for action, reward in a.Q[state].iteritems():
-                        f.write(" -- {} : {:.2f}\n".format(action, reward))
-                    f.write("\n")  
-                self.table_file.close()
+                original = False
+
+                if original:
+                    f = self.table_file
+
+                    f.write("/-----------------------------------------\n")
+                    f.write("| State-action rewards from Q-Learning\n")
+                    f.write("\-----------------------------------------\n\n")
+
+                    for state in a.Q:
+                        f.write("{}\n".format(state))
+                        for action, reward in a.Q[state].iteritems():
+                            f.write(" -- {} : {:.2f}\n".format(action, reward))
+                        f.write("\n")
+                    self.table_file.close()
+                else:
+                    f = self.table_file
+
+                    f.write("waypoint, light, oncoming, left, right, action_forward, action_right, action_none, action_left\n")
+
+                    for state in a.Q:
+                        for entry in state:
+                            f.write("{},".format(entry))
+                        for action, reward in a.Q[state].iteritems():
+                            f.write("{0:0.2f},".format(reward))
+                        f.write("\n")
+                    self.table_file.close()
 
             self.log_file.close()
 
